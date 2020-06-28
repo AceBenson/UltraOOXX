@@ -41,9 +41,8 @@ namespace TA
             int round = 0;
             if( !prepareState() ) return ;
 
-            //Todo: Play Game
+            //Todo: Play Game;
             MainBoard.setWinTag(BoardInterface::Tag::None);
-            putToGui("Hello world %d\n", 123);
             updateGuiGame();
 
             AIInterface *first = m_P2;
@@ -51,8 +50,10 @@ namespace TA
             BoardInterface::Tag tag = BoardInterface::Tag::X;
 
             while (!checkGameover()) {
-            //while (round != 81) {
+            // while (round != 81) {
                 round++;
+                // char c;
+                // std::cin >> c;
 
                 if(tag == BoardInterface::Tag::X) {
                     tag = BoardInterface::Tag::O;
@@ -63,11 +64,12 @@ namespace TA
                     first = m_P2;
                     second = m_P1;
                 }
+                
 
                 if (!playOneRound(first, tag, second)) {
-                    
+
                 }
-                // putToGui("round =  %d\n", round);
+                putToGui("round =  %d\n", round);
                 updateGuiGame();
             } 
         } 
@@ -77,14 +79,7 @@ namespace TA
         {
             gui->updateGame(MainBoard);
         }
-        char toPrintChar(BoardInterface::Tag t){
-            switch(t) {
-                case BoardInterface::Tag::O: return 'O';
-                case BoardInterface::Tag::X: return 'X';
-                default:
-                    return ' ';
-            }
-        }
+
         bool playOneRound(AIInterface *user, BoardInterface::Tag tag, AIInterface *enemy)
         {
             auto pos = call(&AIInterface::queryWhereToPut, user, MainBoard);
@@ -95,10 +90,20 @@ namespace TA
             BoardInterface::Tag& t = MainBoard.get(x, y);
             if (t != BoardInterface::Tag::None) {
                 // this player will lose
+                std::cout << "Wrong here\n";
                 return false;
             }
-            bool flag = false; 
+
             t = tag;
+
+            updateWinTag(t, x, y);
+
+            call(&AIInterface::callbackReportEnemy, enemy, x, y);
+            return true;
+        }
+
+        void updateWinTag(BoardInterface::Tag t, int x, int y) {
+            bool flag = false; 
             Board save = MainBoard.sub(x/3,y/3);
             if(MainBoard.sub(x/3,y/3).getWinTag() == BoardInterface::Tag::None){
                 for(int i = 0; i < 3; i++){
@@ -139,23 +144,27 @@ namespace TA
                 }
                 flag = false;
             }
-            if(MainBoard.sub(x/3,y/3).getWinTag() == BoardInterface::Tag::None && MainBoard.sub(x/3,y/3).full()) MainBoard.sub(x/3,y/3).setWinTag(BoardInterface::Tag::Tie);
-            //std::cout << x/3 << " " << y/3 << " " << toPrintChar(MainBoard.sub(x/3, y/3).getWinTag()) << "\n";
-            
-            // enemy->callbackReportEnemy(x, y);
-            call(&AIInterface::callbackReportEnemy, enemy, x, y);
-            
-            return true;
+            if(MainBoard.sub(x/3,y/3).getWinTag() == BoardInterface::Tag::None && MainBoard.sub(x/3,y/3).full()) 
+                MainBoard.sub(x/3,y/3).setWinTag(BoardInterface::Tag::Tie);
+        }
+        
+        char toPrintChar(BoardInterface::Tag t){
+            switch(t) {
+                case BoardInterface::Tag::O: return 'O';
+                case BoardInterface::Tag::X: return 'X';
+                default:
+                    return ' ';
+            }
         }
 
         bool checkGameover()
         {
             // return true; // Gameover!
             if(MainBoard.getWinTag() != BoardInterface::Tag::None){
-                std::cout << toPrintChar(MainBoard.getWinTag()) <<"\n";
+                putToGui("The player %c is win!!!\n", toPrintChar(MainBoard.getWinTag()));
                 return true;
             }
-            std::cout << toPrintChar(MainBoard.getWinTag()) <<"\n";
+            // std::cout << toPrintChar(MainBoard.getWinTag()) <<"\n";
             return false;
         }
 

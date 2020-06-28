@@ -138,6 +138,11 @@ R"( _   _ _ _             _____  _______   ____   __
 
             gotoxy(GRAPH_HIGHT+TEXT_HIGHT+1, 0);
         }
+
+        virtual void updateWinTagGame(UltraBoard b)
+        {
+            
+        }
     };
     #undef ESC
 }

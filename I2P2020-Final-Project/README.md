@@ -51,5 +51,3 @@ No late submit be allowed, or team PK score will be zero.
 * 所有 Bonus 請於 Demo 時現場演示。
 
 No demo, No PK random AI score.
-# UltraOOXX
-# UltraOOXX
